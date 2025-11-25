@@ -1,0 +1,27 @@
+remote:
+  host: proxy.example.com
+  port: 25565
+
+local:
+  listenPort: 9099
+
+lan:
+  motd: "&a远程Velocity代理"
+  version: "1.21.10"
+  maxPlayers: 20
+  announceIntervalMs: 1000
+  broadcastPort: 4445
+  broadcastAddress: 255.255.255.255
+
+security:
+  # whitelist:
+    # - 192.168.0.0/24
+    #- fd00::/8
+
+credentials:
+  enabled: false
+  token: ""
+
+logging:
+  level: INFO
+
