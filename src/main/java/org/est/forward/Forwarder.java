@@ -187,8 +187,24 @@ public final class Forwarder implements AutoCloseable {
             upstreamBytes = upstream.get();
             downstreamBytes = downstream.get();
             
+        } catch (java.net.ConnectException e) {
+            LOGGER.error("无法连接到远程服务器 {}:{} - {}", 
+                remoteConfig.host(), remoteConfig.port(), e.getMessage());
+        } catch (java.net.SocketTimeoutException e) {
+            LOGGER.error("连接远程服务器 {}:{} 超时 - {}", 
+                remoteConfig.host(), remoteConfig.port(), e.getMessage());
+        } catch (java.net.UnknownHostException e) {
+            LOGGER.error("无法解析远程服务器主机名 {} - {}", 
+                remoteConfig.host(), e.getMessage());
+        } catch (java.net.SocketException e) {
+            LOGGER.error("网络连接异常: {}:{} - {}", 
+                clientIP, clientPort, e.getMessage());
+        } catch (java.util.concurrent.ExecutionException e) {
+            LOGGER.error("数据传输异常: {}:{} - {}", 
+                clientIP, clientPort, e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
         } catch (Exception e) {
-            LOGGER.error("转发会话异常: {}:{}", clientIP, clientPort, e);
+            LOGGER.error("转发会话异常: {}:{} - {}", 
+                clientIP, clientPort, e.getMessage());
         } finally {
             try {
                 client.close();
