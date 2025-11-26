@@ -98,7 +98,7 @@ public final class Forwarder implements AutoCloseable {
                 "无法绑定端口 %d：端口已被占用。\n" +
                 "解决方案：\n" +
                 "1. 检查是否有其他程序占用该端口：netstat -ano | findstr :%d\n" +
-                "2. 关闭占用端口的进程，或修改 application.yaml 中的 local.listenPort 为其他端口\n" +
+                "2. 关闭占用端口的进程，或修改 config.yaml 中的 local.listenPort 为其他端口\n" +
                 "3. 检查是否有之前的 MinecraftLanRedirect 实例仍在运行\n" +
                 "4. 如果是 TIME_WAIT 状态，请等待 2-4 分钟后重试",
                 port, port);
@@ -151,48 +151,68 @@ public final class Forwarder implements AutoCloseable {
 
     private void handleClient(Socket client) {
         InetSocketAddress clientAddress = (InetSocketAddress) client.getRemoteSocketAddress();
-        LOGGER.info("客户端连接: {}", clientAddress);
+        String clientIP = clientAddress.getAddress().getHostAddress();
+        int clientPort = clientAddress.getPort();
+        
+        LOGGER.info("客户端连接: {}:{} -> {}:{}", 
+            clientIP, clientPort, remoteConfig.host(), remoteConfig.port());
+            
+        long upstreamBytes = 0;
+        long downstreamBytes = 0;
+        
         try (Socket remote = new Socket()) {
             remote.connect(new InetSocketAddress(remoteConfig.host(), remoteConfig.port()),
                     (int) CONNECT_TIMEOUT.toMillis());
             remote.setTcpNoDelay(true);
             client.setTcpNoDelay(true);
-            CompletableFuture<Void> upstream = CompletableFuture.runAsync(() -> {
+            
+            CompletableFuture<Long> upstream = CompletableFuture.supplyAsync(() -> {
                 try {
-                    pipe(client.getInputStream(), remote.getOutputStream());
+                    return pipe(client.getInputStream(), remote.getOutputStream());
                 } catch (IOException e) {
                     LOGGER.error("上游数据流异常", e);
+                    return 0L;
                 }
             }, executor);
-            CompletableFuture<Void> downstream = CompletableFuture.runAsync(() -> {
+            
+            CompletableFuture<Long> downstream = CompletableFuture.supplyAsync(() -> {
                 try {
-                    pipe(remote.getInputStream(), client.getOutputStream());
+                    return pipe(remote.getInputStream(), client.getOutputStream());
                 } catch (IOException e) {
                     LOGGER.error("下游数据流异常", e);
+                    return 0L;
                 }
             }, executor);
-            CompletableFuture.allOf(upstream, downstream).join();
+            
+            upstreamBytes = upstream.get();
+            downstreamBytes = downstream.get();
+            
         } catch (Exception e) {
-            LOGGER.error("转发会话异常: {}", clientAddress, e);
+            LOGGER.error("转发会话异常: {}:{}", clientIP, clientPort, e);
         } finally {
             try {
                 client.close();
             } catch (IOException ignored) {
             }
-            LOGGER.info("客户端断开: {}", clientAddress);
+            long totalBytes = upstreamBytes + downstreamBytes;
+            LOGGER.info("客户端断开: {}:{} (上行: {} bytes, 下行: {} bytes, 总计: {} bytes)", 
+                clientIP, clientPort, upstreamBytes, downstreamBytes, totalBytes);
         }
     }
 
-    private void pipe(InputStream in, OutputStream out) {
+    private long pipe(InputStream in, OutputStream out) {
         byte[] buffer = new byte[16 * 1024];
+        long totalBytes = 0;
         try {
             int len;
             while ((len = in.read(buffer)) >= 0) {
                 out.write(buffer, 0, len);
                 out.flush();
+                totalBytes += len;
             }
         } catch (IOException ignored) {
         }
+        return totalBytes;
     }
 
     @Override
