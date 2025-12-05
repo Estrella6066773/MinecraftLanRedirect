@@ -1,0 +1,18 @@
+<configuration>
+    
+    <!-- 使用自定义的ConditionalPatternLayout -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.est.ConditionalPatternLayout" />
+        </encoder>
+    </appender>
+    
+    <!-- 根配置 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+    
+    <!-- 可以针对特定包设置DEBUG级别 -->
+    <logger name="org.est" level="INFO" />
+    
+</configuration>

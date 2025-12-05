@@ -6,7 +6,7 @@
 
     <groupId>org.est</groupId>
     <artifactId>MinecraftLanRedirect</artifactId>
-    <version>1.0</version>
+    <version>1.1-beta</version>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
@@ -26,9 +26,9 @@
             <version>1.7.36</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.36</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.10</version>
         </dependency>
     </dependencies>
 

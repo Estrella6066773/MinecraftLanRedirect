@@ -25,7 +25,7 @@ public final class IpWhitelist {
         }
         List<Subnet> subnets = new ArrayList<>();
         for (String cidr : cidrBlocks) {
-            if (cidr == null || cidr.isBlank()) {
+            if (cidr == null || cidr.trim().isEmpty()) {
                 continue;
             }
             String normalized = cidr.trim().toLowerCase(Locale.ROOT);

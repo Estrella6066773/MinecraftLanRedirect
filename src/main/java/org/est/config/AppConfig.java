@@ -98,15 +98,11 @@ public final class AppConfig {
             return null;
         }
         String motd = asString(map.get("motd"));
-        String version = asString(map.get("version"));
-        Integer maxPlayers = asInteger(map.get("maxPlayers"));
         Long interval = asLong(map.get("announceIntervalMs"));
         Integer broadcastPort = asInteger(map.get("broadcastPort"));
         String broadcastAddress = asString(map.get("broadcastAddress"));
         return new Lan(
                 motd != null ? motd : "Minecraft Proxy",
-                version != null ? version : "1.20.x",
-                maxPlayers != null ? maxPlayers : 20,
                 interval != null ? interval : 1000L,
                 broadcastPort != null ? broadcastPort : 4445,
                 broadcastAddress != null ? broadcastAddress : "255.255.255.255"
@@ -147,7 +143,7 @@ public final class AppConfig {
         if (lan != null) {
             lan.ensureDefaults();
         }
-        Lan resolvedLan = lan != null ? lan : new Lan("Minecraft Proxy", "1.20.x", 20, 1000L, 4445, "255.255.255.255");
+        Lan resolvedLan = lan != null ? lan : new Lan("Minecraft Proxy", 1000L, 4445, "255.255.255.255");
         resolvedLan.ensureDefaults();
         Security resolvedSecurity = security != null ? security : new Security(new ArrayList<String>());
         Credentials resolvedCredentials = credentials != null ? credentials : new Credentials(false, "");
@@ -229,8 +225,6 @@ public final class AppConfig {
 
     public static final class Lan {
         private String motd;
-        private String version;
-        private int maxPlayers;
         private Long announceIntervalMs;
         private int broadcastPort;
         private String broadcastAddress;
@@ -239,14 +233,10 @@ public final class AppConfig {
         }
 
         public Lan(String motd,
-                   String version,
-                   int maxPlayers,
                    Long announceIntervalMs,
                    int broadcastPort,
                    String broadcastAddress) {
             this.motd = motd;
-            this.version = version;
-            this.maxPlayers = maxPlayers;
             this.announceIntervalMs = announceIntervalMs;
             this.broadcastPort = broadcastPort;
             this.broadcastAddress = broadcastAddress;
@@ -259,22 +249,6 @@ public final class AppConfig {
 
         public void setMotd(String motd) {
             this.motd = motd;
-        }
-
-        public String version() {
-            return version;
-        }
-
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        public int maxPlayers() {
-            return maxPlayers;
-        }
-
-        public void setMaxPlayers(int maxPlayers) {
-            this.maxPlayers = maxPlayers;
         }
 
         public Long announceIntervalMs() {
@@ -312,7 +286,7 @@ public final class AppConfig {
             if (announceIntervalMs == null || announceIntervalMs <= 0) {
                 announceIntervalMs = 1000L;
             }
-            if (broadcastAddress == null || broadcastAddress.isBlank()) {
+            if (broadcastAddress == null || broadcastAddress.trim().isEmpty()) {
                 broadcastAddress = "255.255.255.255";
             }
         }

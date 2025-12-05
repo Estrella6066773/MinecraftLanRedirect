@@ -15,12 +15,13 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public final class Main {
-
+    
     public static void main(String[] args) throws Exception {
         configureLoggingDefaults();
         AppConfig config = loadConfig(args);
         applyLogLevel(config.logging().level());
         Logger logger = LoggerFactory.getLogger(Main.class);
+        
         IpWhitelist whitelist = IpWhitelist.from(config.security().whitelist());
         printStartupHints(logger, config);
 
@@ -53,8 +54,8 @@ public final class Main {
     private static void printStartupHints(Logger logger, AppConfig config) {
         logger.info("即将把本地端口 {} 转发至远程 {}:{}",
                 config.local().listenPort(), config.remote().host(), config.remote().port());
-        logger.info("LAN 广播：MOTD='{}' 版本='{}' 最大人数={} 广播地址={}:{} 每 {}ms",
-                config.lan().motd(), config.lan().version(), config.lan().maxPlayers(),
+        logger.info("LAN 广播：MOTD='{}' 广播地址={}:{} 每 {}ms",
+                config.lan().motd(),
                 config.lan().broadcastAddress(), config.lan().broadcastPort(), config.lan().announceIntervalMillis());
         if (config.security().whitelist().isEmpty()) {
             logger.warn("当前未启用 IP 白名单，局域网内所有客户端均可连接。");
@@ -76,18 +77,14 @@ public final class Main {
     }
 
     private static void configureLoggingDefaults() {
-        if (System.getProperty("org.slf4j.simpleLogger.showDateTime") == null) {
-            System.setProperty("org.slf4j.simpleLogger.showDateTime", "true");
-        }
-        if (System.getProperty("org.slf4j.simpleLogger.defaultLogLevel") == null) {
-            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
-        }
+        // 不再需要设置SLF4J SimpleLogger的系统属性
+        // 现在使用logback.xml配置文件
     }
 
     private static void applyLogLevel(String level) {
-        if (level != null && !level.isBlank()) {
-            System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", level.toLowerCase());
-        }
+        // 不再需要设置系统属性
+        // 日志级别现在由logback.xml配置文件控制
+        // 如果需要动态修改日志级别，可以使用其他方法
     }
 
     private static AppConfig loadConfig(String[] args) throws Exception {
