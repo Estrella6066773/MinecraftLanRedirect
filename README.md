@@ -20,6 +20,7 @@ mvn clean package
 
 ### 2. 首次运行生成配置
 ```bash
+# 注意：下载的软件包有版本号后缀，请自行重命名
 java -jar MinecraftLanRedirect.jar
 ```
 程序会自动在Jar同目录生成 `config.yaml` 配置文件。

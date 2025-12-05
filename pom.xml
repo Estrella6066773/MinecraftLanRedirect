@@ -6,7 +6,7 @@
 
     <groupId>org.est</groupId>
     <artifactId>MinecraftLanRedirect</artifactId>
-    <version>1.1-beta</version>
+    <version>1.1</version>
 
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
