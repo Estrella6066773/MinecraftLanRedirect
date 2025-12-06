@@ -3,7 +3,10 @@
     <!-- 使用自定义的ConditionalPatternLayout -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.est.ConditionalPatternLayout" />
+            <layout class="org.est.ConditionalPatternLayout">
+                <!-- 设置一个默认的pattern，即使我们重写了doLayout方法 -->
+                <pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+            </layout>
         </encoder>
     </appender>
     
