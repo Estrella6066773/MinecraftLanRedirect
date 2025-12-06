@@ -11,6 +11,8 @@
 
 ## 🚀 快速开始
 
+如果你对以下内容感到不解，请自行学习**控制台**和**批处理文件**的相关知识。
+
 ### 1. 下载或构建
 ```bash
 # 使用Maven构建
@@ -21,6 +23,8 @@ mvn clean package
 ### 2. 首次运行生成配置
 ```bash
 # 注意：下载的软件包有版本号后缀，请自行重命名
+@echo off
+chcp 65001 # 如果中文出现乱码，请添加此行
 java -jar MinecraftLanRedirect.jar
 ```
 程序会自动在Jar同目录生成 `config.yaml` 配置文件。
@@ -29,16 +33,14 @@ java -jar MinecraftLanRedirect.jar
 打开生成的 `config.yaml`，主要修改以下部分：
 ```yaml
 remote:
-  host: "你的远程服务器地址"    # 如：mc.example.com
+  host: "mc.example.com"       # 远程服务器地址
   port: 25565                  # 远程服务器端口
 
 local:
   listenPort: 25570            # 本地监听端口
 
 lan:
-  motd: "&a我的远程服务器"      # 在LAN列表中显示的名称
-  version: "1.20.4"            # 服务器版本
-  maxPlayers: 20               # 最大玩家数
+  motd: "&a我的远程服务器"      # 在局域网列表中显示的名称
 ```
 
 ### 4. 再次运行
@@ -65,7 +67,7 @@ java -jar MinecraftLanRedirect.jar
 程序会输出详细的运行日志，包括：
 - 启动信息
 - 连接转发状态
-- LAN广播状态
+- LAN 广播状态
 - 安全警告
 
 可通过修改 `logging.level` 调整日志详细程度。
