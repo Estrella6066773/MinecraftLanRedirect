@@ -59,7 +59,7 @@ java -jar MinecraftLanRedirect.jar
 ## 🔒 安全提示
 
 - 默认情况下允许所有局域网客户端连接
-- 如需限制访问，请在 `security.whitelist` 中添加IP段，如：`["192.168.1.0/24"]`
+- 如需限制访问，请在 `security.whitelist` 中添加IP段，如：`["192.168.1.0/24"]` (未实现)
 - 如果远程服务器需要身份验证，可配置 `credentials` 部分 (未实现)
 
 ## 📝 日志查看
